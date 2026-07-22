@@ -3,10 +3,18 @@ const App = () => {
 
 const [task, setTask] = useState("")
 const [taskList, setTaskList] = useState([])
+const [editIndex, setEditIndex] = useState(null)
 
  const taskAdded = (e) =>{
   e.preventDefault()
-  setTaskList([...taskList,{task}])
+  if(editIndex !== null){
+    let updatedList = [...taskList]
+    updatedList[editIndex] = {task}
+    setTaskList(updatedList)
+    setEditIndex(null)
+  } else {
+    setTaskList([...taskList,{task}])
+  }
   setTask('')
  }
 
@@ -14,6 +22,11 @@ const [taskList, setTaskList] = useState([])
   let newTask = [...taskList]
   newTask.splice(index,1)
   setTaskList(newTask)
+ }
+
+ const taskEdited = (index) => {
+  setTask(taskList[index].task)
+  setEditIndex(index)
  }
 
  
@@ -33,13 +46,18 @@ const [taskList, setTaskList] = useState([])
           setTask(e.target.value)
         }}
          />
-        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add</button>
+        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+          {editIndex !== null ? "Update" : "Add"}
+        </button>
       </form>
       <div>
         {taskList.map((elem, index)=>(
           <div key={index} className='p-2 text-white flex justify-between items-center border-b-2 border-gray-700'>
             <h3>{elem.task}</h3>
-            <button className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600' onClick={() => taskDeleted(index)}>Delete</button>
+            <div>
+              <button className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2' onClick={() => taskEdited(index)}>Edit</button>
+              <button className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600' onClick={() => taskDeleted(index)}>Delete</button>
+            </div>
           </div>
         ))}
       </div>
