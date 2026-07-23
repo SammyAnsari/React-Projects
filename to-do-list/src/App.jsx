@@ -3,60 +3,61 @@ const App = () => {
 
 const [task, setTask] = useState("")
 const [taskList, setTaskList] = useState([])
-const [editIndex, setEditIndex] = useState(null)
 
- const taskAdded = (e) =>{
-  e.preventDefault()
-  if(editIndex !== null){
-    let updatedList = [...taskList]
-    updatedList[editIndex] = {task}
-    setTaskList(updatedList)
-    setEditIndex(null)
-  } else {
-    setTaskList([...taskList,{task}])
-  }
-  setTask('')
+ const taskHandler = (elem) =>{
+  setTask(elem)
+
  }
 
- const taskDeleted = (index) =>{
-  let newTask = [...taskList]
-  newTask.splice(index,1)
-  setTaskList(newTask)
+ const submitHandler = (elem) =>{
+  elem.preventDefault()
+  if(!task) return;
+  setTaskList([...taskList, task]);
+  setTask("");
  }
 
- const taskEdited = (index) => {
-  setTask(taskList[index].task)
-  setEditIndex(index)
+ const deleteHandler = (index) =>{
+  const newTaskList = taskList.filter((currValue, i) => i !== index);
+  setTaskList(newTaskList);
  }
 
- 
+
+
   return (
     <div className = 'bg-black text-white h-screen item-center'>
       <form 
-      onSubmit={(e)=>{
-        taskAdded(e)
-      }}
+      onSubmit={submitHandler}
        className='text-center'>
         <input
          type="text" 
          placeholder="ENTER YOUR TASK" 
          className="px-5 py-2 rounded border-2 m-5"
          value={task}
-         onChange={(e)=>{
-          setTask(e.target.value)
+         onChange={(elem)=>{
+          setTask(elem.target.value)
         }}
          />
-        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-          {editIndex !== null ? "Update" : "Add"}
-        </button>
+        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add</button>
       </form>
       <div>
         {taskList.map((elem, index)=>(
           <div key={index} className='p-2 text-white flex justify-between items-center border-b-2 border-gray-700'>
-            <h3>{elem.task}</h3>
             <div>
-              <button className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2' onClick={() => taskEdited(index)}>Edit</button>
-              <button className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600' onClick={() => taskDeleted(index)}>Delete</button>
+            <h3>{elem}</h3>
+            </div>
+            <div className='flex gap-2'>
+            <button 
+              onClick={() => deleteHandler(index)}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => editHandler(index)}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Edit
+            </button>
             </div>
           </div>
         ))}
